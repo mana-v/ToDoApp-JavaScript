@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+  <title>To do list</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">ToDolist</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <h2 class="text-center my-4">
+      ToDos list
+    </h2>
+    <div class="form-group mt-3">
+      <label for="title">Title</label>
+      <input type="text" class="form-control" id="title" aria-describedby="emailHelp"
+        placeholder="Add An Item To the List">
+    </div>
+    <div class="form-group mt-3">
+      <label for="description" id="clear">Description</label>
+      <textarea class="form-control" id="description" rows="3"></textarea>
+    </div>
+    <button class="btn btn-success mt-3" id="add">Add To list</button>
+    <button class="btn btn-success mt-3" id="clearing" onclick="clearing()">Clear List</button>
+    <div class="items my-4">
+      <h2>Your Items :-</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">S.no</th>
+            <th scope="col">Item Title</th>
+            <th scope="col">Item Description</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr>
+            <th scope="row">1</th>
+            <td>Get Some Coffee</td>
+            <td>You need coffee Because you are a coder</td>
+            <td><button class="btn btn-primary">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Optional JavaScript; choose one of the two! -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+    crossorigin="anonymous"></script>
+
+  <script>
+    function getAndUpdate() {
+      tit = document.getElementById('title').value;
+      desc = document.getElementById('description').value;
+      if (localStorage.getItem('itemsJson') == null) {
+        itemJsonArray = [];
+        itemJsonArray.push([tit, desc]);
+        localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray))
+      }
+      else {
+        itemJsonArraystr = localStorage.getItem('itemsJson');
+        itemJsonArray = JSON.parse(itemJsonArraystr);
+        itemJsonArray.push([tit, desc]);
+        localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray));
+      }
+      update();
+    }
+    function update() {
+      if (localStorage.getItem('itemsJson') == null) {
+        itemJsonArray = [];
+        localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray))
+      }
+      else {
+        itemJsonArraystr = localStorage.getItem('itemsJson');
+        itemJsonArray = JSON.parse(itemJsonArraystr);
+      }
+      //Populating the table
+      let tableBody = document.getElementById('tableBody');
+      let str = "";
+      itemJsonArray.forEach((eLement, index) => {
+        str += `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${eLement[0]}</td>
+                    <td>${eLement[1]}</td>
+                    <td><button class="btn btn-primary" onclick="deleted(${index})">Delete</button></td>
+                    </tr>`;
+      });
+      document.getElementById('tableBody').innerHTML = str;
+    }
+    add = document.getElementById('add');
+    add.addEventListener('click', getAndUpdate);
+    update();
+    function deleted(itemIndex) {
+      // console.log("Delete", itemIndex)
+      itemJsonArraystr = localStorage.getItem('itemsJson')
+      itemJsonArray = JSON.parse(itemJsonArraystr)
+      //delete item index element from the array
+      itemJsonArray.splice(itemIndex, 1)
+      localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray));
+      update();
+    }
+    function clearing() {
+      if (confirm('Do you really want to clear it !')) {
+        localStorage.clear();
+        update();
+      }
+    }
+  </script>
+</body>
+
+</html>
